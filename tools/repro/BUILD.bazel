@@ -1,0 +1,16 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "repro",
+    srcs = ["language.go"],
+    importpath = "github.com/navsmb/bazel-bugs/tools/repro",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@gazelle//config",
+        "@gazelle//label",
+        "@gazelle//language",
+        "@gazelle//repo",
+        "@gazelle//resolve",
+        "@gazelle//rule",
+    ],
+)

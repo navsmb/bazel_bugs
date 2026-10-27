@@ -1,0 +1,18 @@
+load("@gazelle//:def.bzl", "DEFAULT_LANGUAGES", "gazelle", "gazelle_binary")
+
+gazelle(
+    name = "gazelle",
+)
+
+gazelle(
+    name = "gazelle_with_plugin",
+    gazelle = "gazelle_binary",
+)
+
+gazelle_binary(
+    name = "gazelle_binary",
+    languages = DEFAULT_LANGUAGES + [
+        "//tools/repro",
+    ],
+    visibility = ["//visibility:private"],
+)

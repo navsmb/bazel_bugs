@@ -1,0 +1,45 @@
+########################
+# Import bazelrc presets
+# To regenerate the preset after updating the bazelrc-preset.bzl version: bazel run //tools:preset.update. 
+# The //tools:preset.update_test target will fail CI if the vendored file becomes stale.
+
+import %workspace%/tools/preset.bazelrc
+
+########################
+# Project-specific flags
+
+# rules_android (a transitive dep via rules_kotlin) auto-detects a local Android SDK via ANDROID_HOME
+# and fails the loading phase if the SDK has no standard numeric API levels installed. This repo has
+# no Android code, so blank ANDROID_HOME for repository rules to make the extension create an empty
+# SDK repo instead of scanning the local SDK.
+common --repo_env=ANDROID_HOME=
+
+
+build --incompatible_strict_action_env
+
+build --java_language_version=21 --java_runtime_version=remotejdk_21
+build --tool_java_language_version=21 --tool_java_runtime_version=remotejdk_21
+
+
+# used for the keep_sorted linter so it will not force it's deps on everyone else
+common --experimental_isolated_extension_usages
+common --@protobuf//bazel/toolchains:prefer_prebuilt_protoc
+common --incompatible_enable_proto_toolchain_resolution
+
+build --features=-layering_check
+build --incompatible_disallow_empty_glob=false
+build --remote_local_fallback=true
+build --nolegacy_external_runfiles
+
+common:ci --remote_cache=http://bazel-remote.helpers:8080
+# common:macos --linkopt="-Wl,-no_warn_duplicate_libraries"
+# common:macos --host_linkopt="-Wl,-no_warn_duplicate_libraries"
+common:macos --macos_minimum_os=13.0
+common:macos --host_macos_minimum_os=13.0
+
+common --run_in_cwd
+########################
+# User preferences
+try-import %workspace%/user.bazelrc
+
+# must have newline at end of file, because ci will append things and assumes it will work
